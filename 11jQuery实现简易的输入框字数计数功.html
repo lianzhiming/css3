@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div class="container">
+    <input id="abc" value="jQuery插件库"><span id="wordCountShow"></span>
+</div>
+<script src="./js/jquery-1.11.3.min.js"></script>
+<script>
+    $.fn.extend({
+        wordCount: function (maxLength, wordWrapper) {
+            var self = this;
+            $(self).attr("maxlength", maxLength);
+            showWordCount();
+            $(this).on("input propertychange", showWordCount);
+            function showWordCount() {
+                curLength = $(self).val().length;
+                var leaveCount = maxLength - curLength;
+                wordWrapper.text(leaveCount + "/" + maxLength);
+            }
+        }
+    })
+    $(function () {
+        $("#abc").wordCount(15, $("#wordCountShow"));
+    })
+</script>
+</body>
+</html>
