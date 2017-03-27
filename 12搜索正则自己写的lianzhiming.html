@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        *{
+            margin:0px;
+            padding:0px;
+            list-style: none;
+        }
+        body{
+            width:100%;
+            height:100%;
+            background-color:#333;
+        }
+        .content{
+            margin:10px auto 0 auto;
+            width:90%;
+            background-color:#fff;
+            border:1px solid #ccc;
+            border-top:4px solid #5fb068;
+            padding:0 20px;
+            position: relative;
+        }
+        input{
+            width:100%;
+            height:30px;
+            margin:10px 0;
+            outline:none;
+            padding-left:5px;
+        }
+        ul{
+            width:95%;
+            position: absolute;
+            background-color:#fff;
+        }
+        li{
+            height:25px;
+            line-height: 25px;
+            padding-left:5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+       <h1>HTML列表(使用AJAX加载)</h1>
+        <p>选择一个元素</p>
+        <input type="text" placeholder="e.g.datalist"/>
+        <ul>
+            <li></li>
+        </ul>
+    </div>
+    <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+    <script>
+        $(function () {
+            $.ajax( {
+                type: 'GET',
+                url: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/4621/html-elements.json',
+                dataType: 'json',
+                success: function(data){
+                    $('input').on('keyup', function () {
+                        console.log($(this).val())
+                        var reg=new RegExp($(this).val())
+                        for(var i= 0,arr=[];i<data.length;i++){
+                            if(data[i].search(reg)!=-1 && $(this).val()){
+                                arr.push(data[i])
+                            }
+                        }
+                        for(var i= 0,li='';i<arr.length;i++){
+                            li+='<li>'+arr[i]+'</li>'
+                        }
+                        $('ul').html(li)
+                    })
+                },
+                error: function(error ){
+                    console.log(error)
+                }
+
+            } );
+        })
+    </script>
+</body>
+</html>
