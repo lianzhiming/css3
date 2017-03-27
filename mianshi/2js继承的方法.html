@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<!--一、原型链继承
+　　在原型链继承方面，JavaScript与java、c#等语言类似，仅允许单父类继承。prototype继承的基本方式如下：
+复制代码 代码如下:-->
+<script>
+    function Parent(){}
+    function Child(){}
+    Child.prototype = new Parent();
+</script>
+<!--
+　　通过对象Child的prototype属性指向父对象Parent的实例，使Child对象实例能通过原型链访问到父对象构造所定义的属性、方法等。
+　　构造通过原型链链接了父级对象，是否就意味着完成了对象的继承了呢？答案是否定的。如：
+复制代码 代码如下:-->
+
+<script>
+    function Parent(){}
+    function Child(){}
+    Child.prototype = new Parent();
+    var child = new Child();
+    alert(child.constructor);//function Parent(){}
+    alert(child instanceof Child);//true
+</script>
+
+　<!--　尽管child依然可以作为Child的实例使用，但此时已经丢失了实例child原有的对象构造信息。弥补该缺陷的方法如下：
+复制代码 代码如下:-->
+
+<script>
+    function Parent(){}
+    function Child(){}
+    Child.prototype = new Parent();
+    Child.prototype.constructor = Child;
+    var child = new Child();
+    alert(child.constructor);//function Parent(){}
+    alert(child instanceof Child);//true
+</script>
+
+　<!--　如上代码片段“Child.prototype.constructor = Child”所示，通过显示地指定对象构造Child的原型，强制所有的Child对象实例的构造都为Child。
+二、使用apply、call方法
+　　由于JavaScript内置的Function对象的apply、call方法改变对象构造中“this”的上下文环境，使特定的对象实例具有对象构造中所定义的属性、方法。
+　　使用apply、call继承，在实际开发中操作HTML页面上的DOM对象时尤为常用。如：
+复制代码 代码如下:-->
+
+　　<div id="extend">apply,call继承</div>
+　　<script language="javascript">
+    function ext()
+    {
+        this.onclick=function(){alert(this.innerHTML)}
+    }
+    ext.apply(document.getElementById("extend"));
+    ext.call(document.getElementById("extend"));
+</script>
+
+　<!--　通过apply或call定义的ext方法，使ext方法内部的this上下文表示为DOM对象“<div id="extend">apply,call继承</div>”。
+　　值得注意的是，当使用apply、call时，会直接执行对象构造所定义的代码段，如：
+复制代码 代码如下:-->
+
+　　<script language="javascript">
+    function testExec()
+    {
+        alert("执行！");
+    }
+    testExec.call(null);//弹出execute对话框
+    testExec.apply(null);//弹出execute对话框
+</script>
+
+<!--三、对象实例间的继承
+　　JavaScript对象的多态性，允许实例动态地添加属性、方法。该特性造就了JavaScript中的另一种继承手法——对象实例间的继承。如：
+复制代码 代码如下:-->
+
+　　
+<script>
+    var Person = {name:"nathena",age:"26"};
+    var nathena = {sex:"male"};
+    (function inlineExtends(so,po)
+    {
+        for (var i in po)
+        {
+            if (so[i])//如果so也具有这个成员
+                continue;
+            so[i] = po[i];
+        }
+    })(nathena,Person);
+    alert(nathena.name);//返回nathana
+</script>
+
+　　<!--如以上代码所示，在对象的实例间继承中，父对象Persong定义了“人”所具有的共同属性name、age，子对象nathena定义了自己的私有属性“sex”。函数inlineExtends的功能是，为子对象nathena复制父对象Person中定义的“人”所具有的共同属性。
+　　其中特别需要注意的语句是“if (so[i])”，此句确保了子对象原有的成员不被父对象中同名的成员所覆盖，而违背面向对象中父子对象之间继承的原则——子对象可以覆盖、重载父对象的属性或方法，父对象仅能对子对象隐藏自己的属性或方法。-->
+</body>
+</html>
